@@ -9,21 +9,24 @@ import java.util.Arrays;
 import java.util.List;
 
 public class StreamStudy {
+
     public static long countWords() throws IOException {
         String contents = new String(Files.readAllBytes(Paths
-                .get("src/main/resources/fp/war-and-peace.txt")), StandardCharsets.UTF_8);
+            .get("src/main/resources/fp/war-and-peace.txt")), StandardCharsets.UTF_8);
         List<String> words = Arrays.asList(contents.split("[\\P{L}]+"));
 
         long count = 0;
         for (String w : words) {
-            if (w.length() > 12) count++;
+            if (w.length() > 12) {
+                count++;
+            }
         }
         return count;
     }
 
     public static List<Integer> doubleNumbers(List<Integer> numbers) {
         List<Integer> result = new ArrayList<>();
-        for(Integer number: numbers) {
+        for (Integer number : numbers) {
             result.add(2 * number);
         }
 
@@ -33,7 +36,7 @@ public class StreamStudy {
     public static long sumAll(List<Integer> numbers) {
         int result = 0;
 
-        for(Integer number: numbers) {
+        for (Integer number : numbers) {
             result += number;
         }
 
@@ -41,12 +44,16 @@ public class StreamStudy {
     }
 
     public static long sumOverThreeAndDouble(List<Integer> numbers) {
-        return numbers.stream().filter(v -> v > 3).mapToInt(v -> v * 2).sum();
+        return numbers.stream()
+            .filter(number -> number > 3)
+            .map(number -> number * 2)
+            .reduce(Integer::sum)
+            .orElseThrow(IllegalArgumentException::new);
     }
 
     public static void printLongestWordTop100() throws IOException {
         String contents = new String(Files.readAllBytes(Paths
-                .get("src/main/resources/fp/war-and-peace.txt")), StandardCharsets.UTF_8);
+            .get("src/main/resources/fp/war-and-peace.txt")), StandardCharsets.UTF_8);
         List<String> words = Arrays.asList(contents.split("[\\P{L}]+"));
 
         System.out.println(words);

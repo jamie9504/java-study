@@ -1,6 +1,10 @@
 package techcourse.fp.study;
 
-import org.junit.jupiter.api.Test;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,18 +13,18 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
 
 //import static com.sun.deploy.trace.Trace.print;
-import static java.util.stream.Collectors.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PlayGroundTest {
+
     public static final String COLON_DELIMITER = " : ";
 
     private List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
@@ -59,12 +63,13 @@ class PlayGroundTest {
     @Test
     public void Stream을_활용하여_콜론을_추가하는_문자열_작성() {
         final String result = numbers.stream()
-                .map(String::valueOf)
-                .collect(joining(COLON_DELIMITER));
+            .map(String::valueOf)
+            .collect(joining(COLON_DELIMITER));
 
         System.out.println(result);
     }
-    Path path ;
+
+    Path path;
 
     @Test
     public void 이렇게까지_Stream을_써야할까() throws IOException {
@@ -72,14 +77,14 @@ class PlayGroundTest {
         Stream<String> words = Files.lines(path);
 
         words.collect(
-                groupingBy(word -> word.chars().sorted()
-                        .collect(StringBuilder::new,
-                                (sb, c) -> sb.append((char) c),
-                                StringBuilder::append).toString()))
-                .values().stream()
-                .filter(group -> group.size() >= minGroupSize)
-                .map(group -> group.size() + ": " + group)
-                .forEach(System.out::println);
+            groupingBy(word -> word.chars().sorted()
+                .collect(StringBuilder::new,
+                    (sb, c) -> sb.append((char) c),
+                    StringBuilder::append).toString()))
+            .values().stream()
+            .filter(group -> group.size() >= minGroupSize)
+            .map(group -> group.size() + ": " + group)
+            .forEach(System.out::println);
     }
 
     @Test
@@ -90,7 +95,7 @@ class PlayGroundTest {
     static ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     public void method(final String message) {
-    //    executorService.submit(() -> print(message));
+        //    executorService.submit(() -> print(message));
     }
 
     @Test
@@ -131,15 +136,17 @@ class PlayGroundTest {
     @Test
     public void Function_예제() {
         println("Area is ", 2, 3,
-                (message, length, width) -> message + (length * width));
+            (message, length, width) -> message + (length * width));
     }
 
     @FunctionalInterface
     interface TriFunction<T1, T2, T3, R> {
+
         R apply(T1 t1, T2 t2, T3 t3);
     }
 
-    private <T1, T2, T3> void println(T1 t1, T2 t2, T3 t3, TriFunction<T1, T2, T3, String> function) {
+    private <T1, T2, T3> void println(T1 t1, T2 t2, T3 t3,
+        TriFunction<T1, T2, T3, String> function) {
         System.out.println(function.apply(t1, t2, t3));
     }
 
@@ -158,8 +165,8 @@ class PlayGroundTest {
 
     private static <T> List<T> filter(List<T> list, Predicate<T> condition) {
         return list.stream()
-                .filter(condition)
-                .collect(toList());
+            .filter(condition)
+            .collect(toList());
     }
 
     @Test
@@ -186,11 +193,11 @@ class PlayGroundTest {
         int expected = 8;
 
         Integer usingStreamResult = numbers.stream()
-                .filter(number -> number > 2)
-                .filter(number -> number <= 5)
-                .map(number -> number * 2)
-                .filter(number -> number > 7)
-                .findFirst().get();
+            .filter(number -> number > 2)
+            .filter(number -> number <= 5)
+            .map(number -> number * 2)
+            .filter(number -> number > 7)
+            .findFirst().get();
 
         assertThat(usingStreamResult).isEqualTo(expected);
     }
@@ -198,11 +205,11 @@ class PlayGroundTest {
     @Test
     public void 타입추론은_언제_이루어질까() {
         Stream.of(1, 2, 3, 4, 5)
-                .filter(number -> number > 3)
-                .map(number -> number * 2)
-                .map(i -> "#" + i)
-                .findFirst()
-                .get();
+            .filter(number -> number > 3)
+            .map(number -> number * 2)
+            .map(i -> "#" + i)
+            .findFirst()
+            .get();
     }
 
     @Test
@@ -233,15 +240,15 @@ class PlayGroundTest {
     @Test
     public void Lazy_Evaluation_테스트() {
         Stream stream = Stream.of(1, 2, 3, 4, 5).parallel()
-                .peek(i -> log("starting", i))
-                .filter(i -> {
-                    log("filtering", i);
-                    return i > 3;
-                })
-                .peek(i -> log("post filtering", i))
-                .map(v -> v * 2)
-                .map(i -> "#" + i)
-                .peek(i -> log("post converting", i));
+            .peek(i -> log("starting", i))
+            .filter(i -> {
+                log("filtering", i);
+                return i > 3;
+            })
+            .peek(i -> log("post filtering", i))
+            .map(v -> v * 2)
+            .map(i -> "#" + i)
+            .peek(i -> log("post converting", i));
 
         log("Invoking terminal method count.\n");
         log("The count is", stream.count());
@@ -274,6 +281,6 @@ class PlayGroundTest {
     @Test
     public void 무한_스트림_문제() {
         IntStream.iterate(0, i -> i + 1)
-                .forEach(System.out::println);
+            .forEach(System.out::println);
     }
 }

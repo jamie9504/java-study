@@ -1,10 +1,11 @@
 package techcourse.fp.mission;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.jupiter.api.Test;
+
 class CarTest {
+
     @Test
     public void 이동() {
         Car car = new Car("pobi", 0);
